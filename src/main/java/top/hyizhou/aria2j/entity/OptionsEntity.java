@@ -12,6 +12,7 @@ public class OptionsEntity {
     private String dir;
     /** 下载文件重命名 */
     private String out;
+    /** 最大下载速度，字节每秒，也可以指定单位，如1K、1M */
     @JSONField(name = "max-download-limit")
     private String maxDownloadLimit;
 

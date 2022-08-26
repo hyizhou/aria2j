@@ -1,11 +1,10 @@
 package top.hyizhou.aria2j.client;
 
-import jdk.internal.util.xml.impl.Input;
+import top.hyizhou.aria2j.entity.How;
 import top.hyizhou.aria2j.entity.OptionsEntity;
 import top.hyizhou.aria2j.entity.params.Method;
 import top.hyizhou.aria2j.entity.result.*;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -71,9 +70,9 @@ public interface Aria2 {
 
     /**
      * 通过上传文件形式添加BitTorrent下载
-     * @param torrent .torrent文件流，不可为空
-     * @param uris 用于web播种
-     * @param options 设置项
+     * @param torrent .torrent文件流，不可为空(官方文档：torrent必须是包含“.torrent”文件内容的base64编码字符串)
+     * @param uris 用于web播种，可为null
+     * @param options 设置项，可为null，若不为空而uris为空，为避免歧义必须将uris设置为"[]"，两者都为null时可直接全丢弃
      * @return 返回gid
      */
     String addTorrent(InputStream torrent, String[] uris, OptionsEntity options);
@@ -87,14 +86,14 @@ public interface Aria2 {
     String addMetalink(InputStream metalink, OptionsEntity options);
 
     /**
-     * 删除gid表示的下载
+     * 删除gid表示的下载，调用方法会将下载状态变成 removed
      * @param gid 下载的标识符
      * @return 已删除下载的gid
      */
     String remove(String gid);
 
     /**
-     * 删除gid表示的下载，相当于强制删除
+     * 删除gid表示的下载，相当于强制删除，调用方法会将下载状态变成removed
      * @param gid 下载的标识符
      * @return 已删除下载的标识符
      */
@@ -247,7 +246,7 @@ public interface Aria2 {
     String purgeDownloadResult();
 
     /**
-     * 删除gid表示的下载
+     * 删除gid表示的已完成、错误、已删除的下载（即已停止的下载，由方法tellStopped可查询），相当于将记录删除掉
      * @param gid 下载标识符
      * @return 成功返回ok字符
      */

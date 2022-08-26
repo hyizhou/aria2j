@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.util.ParameterizedTypeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.hyizhou.aria2j.config.Configuration;
+import top.hyizhou.aria2j.entity.How;
 import top.hyizhou.aria2j.entity.OptionsEntity;
 import top.hyizhou.aria2j.entity.basic.AriaRequestEntity;
 import top.hyizhou.aria2j.entity.basic.RpcResponse;
@@ -11,11 +12,13 @@ import top.hyizhou.aria2j.entity.params.Method;
 import top.hyizhou.aria2j.entity.result.*;
 import top.hyizhou.aria2j.send.SimpleHttp;
 import top.hyizhou.aria2j.util.Aria2Exception;
+import top.hyizhou.aria2j.util.StreamUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,14 +56,30 @@ public class Aria2Http implements Aria2, Closeable {
 
     @Override
     public String addTorrent(InputStream torrent, String[] uris, OptionsEntity options) {
-        // todo 文件流处理
-        return null;
+        byte[] read;
+        try {
+             read = StreamUtil.read(torrent);
+        } catch (IOException e) {
+            throw new Aria2Exception("读取输入流出错：" + e.getMessage());
+        }
+        String torrentStr = Base64.getEncoder().encodeToString(read);
+        // 避免uris与options混淆
+        if (Objects.isNull(uris) && Objects.nonNull(options)){
+            uris = new String[0];
+        }
+        return handle(String.class, ADD_TORRENT, token, torrentStr, uris, options).getResult();
     }
 
     @Override
     public String addMetalink(InputStream metalink, OptionsEntity options) {
-        // todo 文件处理
-        return null;
+        byte[] read;
+        try {
+            read = StreamUtil.read(metalink);
+        } catch (IOException e) {
+            throw new Aria2Exception("读取输入流出错：" + e.getMessage());
+        }
+        String metalinkStr = Base64.getEncoder().encodeToString(read);
+        return handle(String.class, ADD_METALINK, token, metalinkStr, options).getResult();
     }
 
     @Override
@@ -159,7 +178,7 @@ public class Aria2Http implements Aria2, Closeable {
 
     @Override
     public Integer changePosition(String gid, int pos, How how) {
-        RpcResponse<Integer> response = handle(Integer.class, CHANGE_POSITION, token, gid, pos, how.name);
+        RpcResponse<Integer> response = handle(Integer.class, CHANGE_POSITION, token, gid, pos, how.name());
         return response.getResult();
     }
 

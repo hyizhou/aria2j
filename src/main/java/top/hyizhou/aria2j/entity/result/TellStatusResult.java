@@ -1,5 +1,7 @@
 package top.hyizhou.aria2j.entity.result;
 
+import top.hyizhou.aria2j.entity.StatusEnum;
+
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ import java.util.List;
 public class TellStatusResult {
     private String gid;
     /** 当前状态，有：waiting、paused、error、complete、removed */
-    private String status;
+    private StatusEnum status;
     /** 总长度，字节bytes为单位，下同 */
     private String totalLength;
     /** 下载长度 */
@@ -117,11 +119,11 @@ public class TellStatusResult {
         this.gid = gid;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 

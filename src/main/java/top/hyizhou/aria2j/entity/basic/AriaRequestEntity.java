@@ -11,9 +11,10 @@ import top.hyizhou.aria2j.util.ParamsUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * aria2 rpc调用所用的报文对象 <br/>q
@@ -46,13 +47,6 @@ public class AriaRequestEntity extends RpcRequest{
         this.params.add(obj);
     }
 
-    /**
-     * 将提供的数组元素按顺序放入params字段列表中
-     * @param params 数组，元素顺序将会是放入params顺序，若是null的元素将会被抛弃
-     */
-//    public void setParams(Object[] params){
-//        this.params = ParamsUtil.create(params);
-//    }
 
     /**
      * 此方法存在主要是为了覆盖父类方法，作用以与父类方法不同，本方法将实体类的字段依次添加到params列表 <br/>
@@ -74,7 +68,7 @@ public class AriaRequestEntity extends RpcRequest{
         this.params = new ArrayList<>();
         // 若参数为空，则不向params中添加元素
 
-        List<Integer> orderList = new ArrayList<Integer>();
+        List<Integer> orderList = new ArrayList<>();
         Class<?> clazz = params.getClass();
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields){
@@ -144,9 +138,8 @@ public class AriaRequestEntity extends RpcRequest{
      * @param params 参数列表，注意前后顺序
      * @return 创建完成的本对象
      */
-    public static AriaRequestEntity create(String method, Object... params){;
+    public static AriaRequestEntity create(String method, Object... params){
         AriaRequestEntity obj = baseCreate(method);
-//        obj.setParams(params);
         obj.params = ParamsUtil.create(params);
         return obj;
     }

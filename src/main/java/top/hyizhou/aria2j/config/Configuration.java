@@ -1,5 +1,9 @@
 package top.hyizhou.aria2j.config;
 
+import com.sun.xml.internal.ws.developer.HttpConfigFeature;
+import org.apache.http.HttpConnection;
+import org.apache.http.client.config.RequestConfig;
+
 import java.net.URL;
 import java.util.Objects;
 
@@ -47,5 +51,38 @@ public class Configuration {
             return protocol.getHeader() + delimiter + this.url;
         }
         return url;
+    }
+
+    public static Builder custom(){
+        return new Builder();
+    }
+
+    public static class Builder{
+        private String url;
+        private String token;
+        private Protocol protocol;
+
+        public Builder setProtocol(Protocol protocol) {
+            this.protocol = protocol;
+            return this;
+        }
+
+        public Builder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder setToken(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public Configuration build(){
+            Configuration conf = new Configuration();
+            conf.setUrl(this.url);
+            conf.setToken(this.token);
+            conf.setProtocol(this.protocol);
+            return conf;
+        }
     }
 }

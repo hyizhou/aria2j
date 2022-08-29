@@ -49,8 +49,12 @@ public class SimpleHttp implements Closeable {
         JSON_CONTENT_TYPE = new BasicHeader("Content-Type", "application/json");
     }
 
-    public SimpleHttp(String uri, int port){
-        this();
+    /**
+     * 设置代理
+     * @param uri 地址
+     * @param port 端口
+     */
+    public void setProxy(String uri, int port){
         this.proxy = new HttpHost(uri, port);
 
     }
@@ -124,15 +128,6 @@ public class SimpleHttp implements Closeable {
         });
     }
 
-    /**
-     * TODO 通过post发送文件，文件以流的形式作为参数提供
-     * @param uri 地址
-     * @param in 文件流
-     * @return 响应对象
-     */
-    public SimpleHttpResp postFile(String uri, InputStream in){
-        return null;
-    }
 
     @Override
     public void close() throws IOException {

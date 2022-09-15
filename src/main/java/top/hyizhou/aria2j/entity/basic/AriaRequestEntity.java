@@ -150,6 +150,7 @@ public class AriaRequestEntity extends RpcRequest{
      * @param paramObj 参数对象，需要继承{@link Params}接口
      * @return 创建完成的本对象
      */
+    @Deprecated
     public static AriaRequestEntity create(String method, Params paramObj){
         AriaRequestEntity obj = baseCreate(method);
         obj.setParams(paramObj);

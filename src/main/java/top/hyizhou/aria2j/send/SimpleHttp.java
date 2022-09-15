@@ -1,16 +1,14 @@
 package top.hyizhou.aria2j.send;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.TypeReference;
 import com.alibaba.fastjson2.util.ParameterizedTypeImpl;
-import org.apache.commons.codec.binary.StringUtils;
-import org.apache.http.*;
-import org.apache.http.client.ResponseHandler;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -18,13 +16,10 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.hyizhou.aria2j.entity.basic.AriaRequestEntity;
 import top.hyizhou.aria2j.entity.basic.RpcResponse;
-import top.hyizhou.aria2j.entity.result.GetGlobalStatResult;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -57,34 +52,6 @@ public class SimpleHttp implements Closeable {
     public void setProxy(String uri, int port){
         this.proxy = new HttpHost(uri, port);
 
-    }
-
-    /**
-     * 通过post发送json请求，响应正文也将使用utf-8编码解析为文本
-     * @param url 请求地址
-     * @param json json字符串
-     * @return 响应对象
-     * @throws IOException 连接异常或终止
-     */
-    @Deprecated
-    public SimpleHttpResp post(String url, String json) throws IOException {
-        log.debug("发起post请求 -- uri:[{}], json: {}",url, json);
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setHeader(JSON_CONTENT_TYPE);
-        // 携带json内容
-        HttpEntity entity = new StringEntity(json, StandardCharsets.UTF_8);
-        httpPost.setEntity(entity);
-        CloseableHttpResponse response = httpClient.execute(httpPost);
-        int statusCode = response.getStatusLine().getStatusCode();
-        // 将响应正文转换成字符串
-        String body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-        if (log.isDebugEnabled()){
-            if (statusCode != HttpStatus.SC_OK){
-                log.debug("响应码不为200 -- 响应码：[{}]，尝试打印出原始响应：\n{}", statusCode, body);
-            }
-        }
-        response.close();
-        return new SimpleHttpResp(statusCode, body);
     }
 
     /**
